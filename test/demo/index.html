@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>UA Projects — Bug reporter demo</title>
+  <style>
+    :root { color-scheme: dark; }
+    body { margin: 0; font: 14px/1.5 system-ui, sans-serif; color: #e5e7eb; background: #111827; }
+    header { display: flex; align-items: center; gap: 10px; padding: 10px 18px; background: #1f2937; border-bottom: 1px solid #374151; }
+    .logo { font-weight: 700; color: #a78bfa; letter-spacing: .5px; }
+    .badge { font-size: 11px; font-weight: 600; padding: 2px 10px; border-radius: 999px; background: #450a0a; color: #fca5a5; border: 1px solid #7f1d1d; }
+    main { padding: 24px 18px; max-width: 760px; }
+    .card { background: #1f2937; border: 1px solid #374151; border-radius: 10px; padding: 14px 16px; margin-bottom: 12px; }
+    .card h3 { margin: 0 0 6px; font-size: 13px; color: #a78bfa; }
+    .kv { font-size: 13px; color: #9ca3af; }
+    .kv b { color: #e5e7eb; }
+    .err { color: #fca5a5; font-size: 12px; min-height: 16px; }
+    /* Store-screenshot overlay mock (?shot=1) */
+    #mock { position: fixed; top: 46px; right: 24px; width: 290px; background: #111827; border: 1px solid #374151; border-radius: 12px; padding: 14px; box-shadow: 0 24px 60px #000a; display: none; }
+    #mock h1 { font-size: 13px; margin: 0 0 8px; color: #a78bfa; letter-spacing: .4px; }
+    #mock .page { font-size: 11px; color: #6b7280; margin-bottom: 10px; }
+    #mock button { display: block; width: 100%; padding: 8px 10px; margin-bottom: 7px; border: 0; border-radius: 8px; font: 600 12px system-ui; }
+    #mock .primary { background: #7c3aed; color: #fff; }
+    #mock .ghost { background: #374151; color: #e5e7eb; }
+    #mock .stats { font-size: 12px; color: #9ca3af; }
+    #mock .stats b { color: #fb7185; }
+  </style>
+</head>
+<body>
+  <header>
+    <span class="logo">UA PROJECTS</span>
+    <span class="badge">3 console errors</span>
+    <span style="margin-left:auto;font-size:12px;color:#9ca3af">bug-reporter demo page</span>
+  </header>
+  <main>
+    <div class="card">
+      <h3>Finance summary — Project #42</h3>
+      <div class="kv">Invoiced: <b>EGP 184,300</b> · Paid: <b>EGP 121,000</b> · Overdue: <b>EGP 8,200</b></div>
+    </div>
+    <div class="card">
+      <h3>Payment widget</h3>
+      <div class="err" id="errline">mounting…</div>
+    </div>
+    <div class="card">
+      <h3>Environment</h3>
+      <div class="kv">build: <b id="b"></b> · release: <b id="r"></b></div>
+    </div>
+  </main>
+
+  <div id="mock">
+    <h1>UA BUG REPORTER</h1>
+    <div class="page">https://app.example/projects/42?tab=finance</div>
+    <button class="primary">Build report</button>
+    <button class="ghost">Arm console capture for this site</button>
+    <label style="display:flex;align-items:center;justify-content:space-between;font-size:12px;color:#d1d5db;padding:4px 0">Attach screenshot <input type="checkbox" checked /></label>
+    <div class="stats">Report ready: <b>3</b> error(s), 1 warning(s), 2 failed request(s)</div>
+  </div>
+
+  <!-- The extension registers this hook at document_start for an armed
+       origin; the demo includes it first so the same code path runs. -->
+  <script src="/hook.js"></script>
+  <script>
+    localStorage.setItem('build', '2026.10.08-4f2a9c');
+    localStorage.setItem('release', 'v3.14.1');
+    localStorage.setItem('env', 'staging');
+    localStorage.setItem('flag_newUi', 'true');
+    localStorage.setItem('theme', 'dark');
+    sessionStorage.setItem('visit', 'p42-finance');
+    document.getElementById('b').textContent = localStorage.getItem('build');
+    document.getElementById('r').textContent = localStorage.getItem('release');
+
+    setTimeout(() => {
+      fetch('/missing').catch(() => {});
+      fetch('/boom').catch(() => {});
+      console.error('Payment widget failed to mount', new Error('widget crashed'));
+      console.warn('localStorage fallback in use');
+      document.getElementById('errline').textContent = '✗ Payment widget failed to mount';
+      setTimeout(() => {
+        throw new Error('late crash during render');
+      }, 30);
+    }, 50);
+
+    if (new URLSearchParams(location.search).get('shot') === '1') {
+      setTimeout(() => (document.getElementById('mock').style.display = 'block'), 150);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <style>
+    :root { color-scheme: dark; }
+    body { margin: 0; font: 14px/1.5 system-ui, sans-serif; color: #e5e7eb; background: #111827; display: flex; min-height: 100vh; }
+    aside { width: 300px; flex: none; background: #0b1220; border-right: 1px solid #374151; padding: 18px 14px; }
+    aside h1 { font-size: 13px; color: #a78bfa; letter-spacing: .4px; margin: 0 0 12px; }
+    aside .item { padding: 8px 10px; border-radius: 8px; cursor: pointer; margin-bottom: 6px; }
+    aside .item:hover { background: #1f2937; }
+    aside .item.sel { background: #1f2937; outline: 1px solid #7c3aed; }
+    aside .t { font-size: 12px; color: #d1d5db; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    aside .u { font-size: 11px; color: #6b7280; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    aside .empty { font-size: 12px; color: #6b7280; }
+    main { flex: 1; padding: 26px 34px 60px; max-width: 860px; }
+    .bar { display: flex; gap: 8px; margin-bottom: 18px; }
+    .bar button {
+      padding: 8px 14px; border: 0; border-radius: 8px; cursor: pointer;
+      font: 600 12px system-ui, sans-serif; background: #374151; color: #e5e7eb;
+    }
+    .bar button:hover { background: #4b5563; }
+    .bar button.primary { background: #7c3aed; color: #fff; }
+    .bar button.primary:hover { background: #6d28d9; }
+    .shot { border: 1px solid #374151; border-radius: 10px; margin: 14px 0; max-width: 100%; }
+    .md h1 { font-size: 18px; color: #a78bfa; margin: 0 0 4px; }
+    .md h2 { font-size: 13px; color: #9ca3af; text-transform: uppercase; letter-spacing: .8px; margin: 22px 0 8px; border-bottom: 1px solid #374151; padding-bottom: 4px; }
+    .md p { margin: 6px 0; }
+    .md pre { background: #0b1220; border: 1px solid #374151; border-radius: 8px; padding: 10px 12px; overflow: auto; font: 12px/1.45 ui-monospace, Consolas, monospace; color: #fecaca; }
+    .md table { border-collapse: collapse; margin: 8px 0; font-size: 12px; }
+    .md th, .md td { border: 1px solid #374151; padding: 5px 9px; text-align: left; }
+    .md th { background: #1f2937; color: #9ca3af; }
+    .md td:first-child { color: #fb7185; font-weight: 600; }
+    .md ul { margin: 6px 0; padding-left: 20px; }
+    .md code { background: #1f2937; border-radius: 4px; padding: 1px 5px; font: 12px ui-monospace, Consolas, monospace; }
+    .md em { color: #6b7280; }
+    .none { color: #6b7280; font-size: 14px; padding: 40px 0; }
+  </style>
+</head>
+<body>
+  <aside>
+    <h1>REPORT HISTORY</h1>
+    <div id="list"></div>
+  </aside>
+  <main>
+    <div class="bar">
+      <button id="copy" class="primary">Copy markdown</button>
+      <button id="dlmd">Download .md</button>
+      <button id="dlpng">Download screenshot</button>
+    </div>
+    <img id="shot" class="shot" hidden alt="page screenshot" />
+    <div id="md" class="md"></div>
+  </main>
+  <script type="module" src="report.js"></script>
+</body>
+</html>

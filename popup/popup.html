@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <style>
+    :root { color-scheme: dark; }
+    body {
+      width: 290px; margin: 0; padding: 14px;
+      font: 13px/1.4 system-ui, sans-serif; color: #e5e7eb;
+      background: #111827;
+    }
+    h1 { font-size: 13px; margin: 0 0 10px; color: #a78bfa; letter-spacing: .4px; }
+    .page {
+      font-size: 11px; color: #6b7280; margin: -6px 0 10px;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    button {
+      padding: 9px 10px; border: 0; border-radius: 8px; cursor: pointer;
+      font: 600 13px system-ui, sans-serif; width: 100%; margin-bottom: 8px;
+    }
+    #build { background: #7c3aed; color: #fff; }
+    #build:hover { background: #6d28d9; }
+    #arm { background: #374151; color: #e5e7eb; }
+    #arm:hover { background: #4b5563; }
+    #arm.on { background: #7f1d1d; color: #fecaca; }
+    #arm.on:hover { background: #991b1b; }
+    label.opt { display: flex; align-items: center; justify-content: space-between; padding: 4px 0; cursor: pointer; color: #d1d5db; }
+    input[type="checkbox"] { accent-color: #7c3aed; }
+    input[type="text"] {
+      width: 100%; background: #1f2937; color: #e5e7eb; border: 1px solid #374151;
+      border-radius: 6px; padding: 5px 7px; font: 12px system-ui; margin-top: 4px;
+    }
+    .field { margin-top: 8px; }
+    .field span { font-size: 11px; color: #9ca3af; }
+    #stats { margin-top: 10px; font-size: 12px; color: #9ca3af; min-height: 16px; }
+    #stats b { color: #fb7185; }
+    #open { display: none; margin-bottom: 8px; background: #374151; color: #e5e7eb; }
+    #open:hover { background: #4b5563; }
+    #history { display: none; background: none; border: 0; color: #a78bfa; font-size: 11px; padding: 2px 0; width: auto; text-decoration: underline; }
+    .hint { margin-top: 8px; font-size: 11px; color: #6b7280; }
+    kbd { background: #1f2937; border-radius: 4px; padding: 1px 5px; font-size: 10px; }
+  </style>
+</head>
+<body>
+  <h1>UA BUG REPORTER</h1>
+  <div class="page" id="page">…</div>
+  <button id="build">Build report</button>
+  <button id="open" hidden>Open full report ↗</button>
+  <button id="arm">Arm console capture for this site</button>
+  <label class="opt">Attach screenshot <input id="shot" type="checkbox" checked /></label>
+  <label class="opt">Include storage summary <input id="storage" type="checkbox" checked /></label>
+  <div class="field">
+    <span>Environment key prefixes (localStorage)</span>
+    <input id="prefixes" type="text" placeholder="build, release, version, env, flag_" />
+  </div>
+  <div id="stats"></div>
+  <button id="history">History (0)</button>
+  <div class="hint">Shortcut: <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd></div>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>
