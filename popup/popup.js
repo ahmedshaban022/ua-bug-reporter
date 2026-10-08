@@ -42,7 +42,7 @@ async function init() {
   $('history').textContent = 'History (' + (reports || []).length + ')';
   $('history').style.display = 'inline-block';
 
-  if (isHttpPage) renderArm(await send('ua-br:armed'));
+  if (isHttpPage) renderArm(await send('ua-br:armed', { origin: currentOrigin }));
 }
 
 function renderArm(res) {
@@ -74,9 +74,9 @@ for (const id of ['shot', 'storage', 'prefixes']) {
 
 $('arm').addEventListener('click', async () => {
   if (!isHttpPage || !currentOrigin) return;
-  const state = await send('ua-br:armed');
+  const state = await send('ua-br:armed', { origin: currentOrigin });
   if (state && state.armed) {
-    renderArm(await send('ua-br:disarm'));
+    renderArm(await send('ua-br:disarm', { origin: currentOrigin }));
     setStatus('Console capture disarmed.');
     return;
   }
@@ -88,7 +88,7 @@ $('arm').addEventListener('click', async () => {
     setStatus('Permission declined — capture not armed.');
     return;
   }
-  renderArm(await send('ua-br:arm'));
+  renderArm(await send('ua-br:arm', { origin: currentOrigin }));
   setStatus('Armed. The page reloads now; errors collect until you build the report.');
 });
 

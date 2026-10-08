@@ -13,6 +13,12 @@ async function activeTab() {
   return tabs[0] || null;
 }
 
+async function activeTabOrigin() {
+  const tab = await activeTab();
+  if (!tab || !tab.url || !/^https?:/i.test(tab.url)) return null;
+  return new URL(tab.url).origin;
+}
+
 // ---------- console-capture arming (opt-in, per origin) ----------
 
 function originKey(origin) {
@@ -176,18 +182,19 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   if (msg.type === 'ua-br:arm') {
     run((async () => {
       // the popup already obtained the optional origin permission (user
-      // gesture lives there); here we only register + reload
+      // gesture lives there) and passes the origin it was opened on
+      const origin = msg.origin || (await activeTabOrigin());
+      if (!origin) return { armed: false, error: 'not-a-page' };
       const tab = await activeTab();
-      const origin = new URL(tab.url).origin;
-      return armOrigin(origin, tab.id);
+      return armOrigin(origin, tab && tab.id);
     })());
     return true;
   }
   if (msg.type === 'ua-br:disarm') {
     run(
       (async () => {
-        const tab = await activeTab();
-        const origin = new URL(tab.url).origin;
+        const origin = msg.origin || (await activeTabOrigin());
+        if (!origin) return { armed: false, error: 'not-a-page' };
         return disarmOrigin(origin);
       })()
     );
@@ -196,9 +203,9 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   if (msg.type === 'ua-br:armed') {
     run(
       (async () => {
-        const tab = await activeTab();
-        if (!tab || !tab.url || !/^https?:/i.test(tab.url)) return { armed: false, error: 'not-a-page' };
-        return { armed: await isArmed(new URL(tab.url).origin) };
+        const origin = msg.origin || (await activeTabOrigin());
+        if (!origin) return { armed: false, error: 'not-a-page' };
+        return { armed: await isArmed(origin) };
       })()
     );
     return true;
