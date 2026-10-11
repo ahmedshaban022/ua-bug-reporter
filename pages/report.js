@@ -130,6 +130,10 @@ async function load() {
   }
   const wanted = new URLSearchParams(location.search).get('id');
   current = reports.find((r) => r.id === wanted) || reports[0] || null;
+  $('copy').disabled = !current;
+  $('dlmd').disabled = !current;
+  $('dlpng').disabled = !(current && current.png);
+  $('shot').hidden = !(current && current.png);
   for (const r of reports) {
     const item = document.createElement('div');
     item.className = 'item' + (current && r.id === current.id ? ' sel' : '');

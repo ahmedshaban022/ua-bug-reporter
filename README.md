@@ -7,7 +7,7 @@ failed network requests with status codes, storage summary, and a
 viewport screenshot — assembled into your tracker's format with an empty
 "Steps to reproduce" waiting for you.
 
-No dependencies, no build step, ~35 KB of plain JS.
+No runtime dependencies or build step. Current version: **1.0.2**.
 
 ## Install (unpacked)
 
@@ -18,8 +18,11 @@ No dependencies, no build step, ~35 KB of plain JS.
 ## Use
 
 - Toolbar → **Build report** (or **Alt+Shift+B**, or right-click → *Build bug report for this page*)
-- The full report opens in its own page: **Copy markdown**, **Download .md**, **Download screenshot**
-- Popup shows a live summary (errors / warnings / failed requests) and the last 10 reports as history
+- After building, click **Open full report** for **Copy markdown**, **Download .md**, and **Download screenshot**. Shortcut/context-menu builds open it automatically.
+- Popup shows a summary (errors / warnings / failed requests); **History** opens the last 10 saved reports.
+- Build and Arm wait for settings to load and disable while an operation is running. Repeated builds respect Chrome's screenshot quota.
+- A screenshot is attached only while the original page tab is active. If capture fails or you switch tabs, the report explains why the screenshot was omitted.
+- Screenshot download is disabled when the report has no attached image.
 
 ### Console capture (opt-in, per site)
 
@@ -32,7 +35,7 @@ needs a hook installed at `document_start`:
    rejections are recorded into a capped ring (200 entries)
 2. Reproduce the bug
 3. **Build report** — everything is included, stacks and all
-4. **Disarm** removes the hook and revokes the per-origin permission
+4. **Disarm** stops recording on already-open pages for that site, removes future hook registration, and revokes the per-origin permission. Pages carrying an older hook without cleanup support are reloaded to remove it.
 
 Without arming you still get the retroactive parts: failed requests
 reconstructed from the Resource Timing API (status per entry), page/env
@@ -76,6 +79,24 @@ about (404 + 500 fetches, `console.error` with an `Error`, a warning, a
 late uncaught throw), loads the real hook + collector, and asserts the
 generated markdown contains all of it — plus ring-cap and idempotent
 re-injection checks.
+
+Workspace browser checks exercise the actual Chrome toolbar popup, full report
+viewer, copy/downloads, console arming/disarming across open tabs, screenshot
+options, overlapping builds, and protection against a different active tab:
+
+```powershell
+node ../.devdeps/verify-runtime.cjs ua-bug-reporter
+node ../.devdeps/verify-bug-reporter.cjs
+node ../.devdeps/verify-bug-reporter.cjs --disarm
+node ../.devdeps/verify-bug-reporter.cjs --legacy-disarm
+node ../.devdeps/verify-bug-reporter.cjs --scaled
+node ../.devdeps/verify-bug-reporter.cjs --no-screenshot
+node ../.devdeps/verify-bug-reporter.cjs --overlap
+node ../.devdeps/verify-bug-reporter.cjs --wrong-tab
+```
+
+Only disposable test copies receive host access to replace the toolbar's
+`activeTab` grant during automation; the shipped permission model is unchanged.
 
 ## Notes & limits
 

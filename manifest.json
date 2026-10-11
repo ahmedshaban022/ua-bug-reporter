@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "UA Bug Reporter",
   "short_name": "UA Bug Reporter",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "One click assembles a ready-to-paste bug report: page and environment info, console errors, failed network requests, and a screenshot — as markdown for your tracker.",
   "permissions": ["activeTab", "scripting", "storage", "contextMenus", "clipboardWrite"],
   "optional_host_permissions": ["http://*/*", "https://*/*"],
